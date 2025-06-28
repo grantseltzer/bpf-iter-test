@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"log"
 
-	bpfiter "github.com/grantseltzer/bpf-iter-test/pkg"
+	bpfiter "github.com/grantseltzer/bpf-iter-test/pkg/iter"
 )
 
 func main() {
-	infos, err := bpfiter.Dump()
+	infos, err := bpfiter.VmaDump()
 	if err != nil {
 		log.Fatalf("Failed to dump: %v", err)
 	}
