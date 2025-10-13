@@ -3,45 +3,16 @@ package hashprep
 import (
 	"crypto/sha256"
 	"debug/elf"
-	"encoding/binary"
 	"fmt"
 	"log"
 )
 
 const PageSize = 4096
-const DynamicEntrySize = 16 // (assuming ELFCLASS64)
 
 type Range struct {
 	Path  string
 	Start uint64
 	End   uint64
-}
-
-func parseDynamicEntries(bin string) error {
-	elfFile, err := elf.Open(bin)
-	if err != nil {
-		return fmt.Errorf("failed to open ELF file: %w", err)
-	}
-	defer elfFile.Close()
-
-	dynamicSection := elfFile.Section(".dynamic")
-	if dynamicSection == nil {
-		return fmt.Errorf("failed to get dynamic section")
-	}
-	dynamicData, err := dynamicSection.Data()
-	if err != nil {
-		return fmt.Errorf("failed to get dynamic data: %w", err)
-	}
-
-	for i := range dynamicData {
-		if i+DynamicEntrySize > len(dynamicData) {
-			break
-		}
-		tag := elf.DynTag(binary.LittleEndian.Uint64(dynamicData[i : i+8]))
-		val := binary.LittleEndian.Uint64(dynamicData[i+8 : i+16])
-		fmt.Printf("Tag: %s, Val: %d\n", tag, val)
-	}
-	return nil
 }
 
 func PrepareHashes(bin string) (map[Range][32]byte, error) {
